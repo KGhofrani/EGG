@@ -1,0 +1,6 @@
+# Step 1, import likelihood function
+# Step 2, get data at new timestep
+# Step 3, calculate likelihood for the data
+# Step 4, shift the temporal weight vector by 1
+# Step 5, update all the weights
+
