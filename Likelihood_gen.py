@@ -91,14 +91,13 @@ class Likelihood(object):
 
 def likelihoodgrid(dataspace):
     # dataspace is an object from class DataSpace
-    # this is a change
 
     parnum = len(dataspace.names) #number of variables
 
     a = 0
     for i in range(0, parnum, 1):
         a += (dataspace.bigdata[i + 1][dataspace.names[i]] - dataspace.bigspace[i][dataspace.names[i]]) ** 2 #calculating
-        #the distance between the grid points and the data points. Needs to be normalized by the average of the data.
+        # the distance between the grid points and the data points. Needs to be normalized by the average of the data.
 
     w = norm.pdf(np.sqrt(a), 0, 1) #Calculating weight of each point
     p = np.multiply(dataspace.bigdata[0], w) #multiplying the outcomes (one or zero) by the distribution
