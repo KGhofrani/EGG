@@ -7,12 +7,37 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-n=1000 # number of time steps
+class DataThings(object):
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
 
-randomvar=np.random.randint(1, n, 1) # just your friendly random integer between 1 and a n
-t=np.linspace(0,10,n)
-timeseries=np.concatenate((np.power(t[0:randomvar],2), np.power(t[randomvar:n],3)- (t[randomvar]**3-t[randomvar]**2)), 0)
-timeseries=timeseries+(np.mean(timeseries)/np.random.randint(3,10))*np.random.randn(len(t))
-print(len(t), len(timeseries))
-plt.plot(timeseries)
-plt.show()
+
+def rolder(timeseries, time, window, n=50):
+    length=len(timeseries)
+    newt=timeseries[1:length] - timeseries[0:-1] / (time[1]-time[0])
+    length = np.size(timeseries)  # length of the time series
+    A = np.ones((length, length - window + 1))  # create a matrix of ones
+    B = np.triu(A, 1)
+    C = np.tril(A, -window)
+    Proj = A - B - C  # this matrix selects the sections to fourier transform
+    M = np.kron(np.reshape(timeseries, [np.size(timeseries), 1]), np.ones(length - window + 1))
+    M = np.reshape(M.ravel()[np.flatnonzero(Proj)], (window, length - window + 1))
+    der=np.mean(M,0)
+
+    return DataThings(time, der)
+
+
+def main():
+
+    n = 1000  # number of time steps
+
+    randomvar = np.random.randint(1, n, 1)  # just your friendly random integer between 1 and a n
+    t = np.linspace(0, 10, n)
+    timeseries = np.concatenate((2 * t[0:randomvar], t[randomvar:n] * 60 - (t[randomvar] * 60 - t[randomvar] * 2)), 0)
+    timeseries = timeseries + (np.mean(timeseries) / (13 * np.random.rand(1) + 5)) * np.random.randn(len(t))
+    print(len(t), len(timeseries))
+    plt.plot(timeseries)
+    plt.show()
+
+main()
