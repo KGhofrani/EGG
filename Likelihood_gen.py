@@ -91,6 +91,7 @@ class Likelihood(object):
 
 def likelihoodgrid(dataspace):
     # dataspace is an object from class DataSpace
+    # this is a change
 
     parnum = len(dataspace.names) #number of variables
 
