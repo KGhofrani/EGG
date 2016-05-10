@@ -8,38 +8,43 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class DataThings(object):
-    def __init__(self, x, y):
+    def __init__(self, x, y, z=0):
         self.x = x
         self.y = y
+        self.z = z
 
 
 def rolder(timeseries, time, window):
     length=len(timeseries)
-    timeseries=(timeseries[1:length] - timeseries[0:-1] )/ (time[1]-time[0])
     length = np.size(timeseries)  # length of the time series
     A = np.ones((length, length - window + 1))  # create a matrix of ones
     B = np.triu(A, 1)
     C = np.tril(A, -window)
-    Proj = A - B - C  # this matrix selects the sections to fourier transform
-    M = np.kron(np.reshape(timeseries, [np.size(timeseries), 1]), np.ones(length - window + 1))
-    M = np.reshape(M.ravel()[np.flatnonzero(Proj)], (window, length - window + 1))
-    der=np.mean(M,1)
-
-    print(der.shape, time[0:length-window+1].shape)
-    return DataThings(time[0:length-window+1], der)
+    Proj = np.transpose(A - B - C)  # this matrix selects the sections to fourier transform
+    M = np.transpose(np.kron(np.ones(length - window + 1), np.reshape(timeseries, [np.size(timeseries), 1])))
+    M = np.reshape(M.ravel()[np.flatnonzero(Proj)], ( length - window + 1,window))
+    M=np.mean(M,1)
+    der = (M[1:length] - M[0:-1]) / (time[1] - time[0])
+    print(der.shape, M.shape)
+    return DataThings(time[0:length-window], der, M)
 
 
 def main():
 
-    n = 1000  # number of time steps
+    n = 10000  # number of time steps
 
     randomvar = np.random.randint(1, n, 1)  # just your friendly random integer between 1 and a n
-    t = np.linspace(0, 1, n)
-    timeseries = np.concatenate((2 * t[0:randomvar], t[randomvar:n] * 60 - (t[randomvar] * 60 - t[randomvar] * 2)), 0)
-    timeseries = timeseries + (np.mean(timeseries) / (50 * np.random.rand(1) + 5)) * 0.001 * np.random.randn(len(t))
-    print(len(t), len(timeseries))
-    der=rolder(timeseries, t, 300)
-    plt.plot(der.y)
+    t = np.linspace(0, 10, n)
+    timeseries = np.concatenate((2 * t[0:randomvar], t[randomvar:n] * 20 -  (t[randomvar] * 20 - t[randomvar] * 2)), 0)
+    timeseries = timeseries + (np.mean(timeseries) / (50 * np.random.rand(1) + 5)) * 1* np.random.randn(len(t))
+    der=rolder(timeseries, t, 500)
+    #plt.plot(t, timeseries)
+    plt.figure(1)
+    plt.plot(der.x, der.y)
+    plt.figure(2)
+    plt.plot(timeseries)
+    plt.figure(3)
+    plt.plot(der.z)
     plt.show()
 
 main()
