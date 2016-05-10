@@ -4,3 +4,15 @@
 # Step 4, shift the temporal weight vector by 1
 # Step 5, update all the weights
 
+import numpy as np
+import matplotlib.pyplot as plt
+
+n=1000 # number of time steps
+
+randomvar=np.random.randint(1, n, 1) # just your friendly random integer between 1 and a n
+t=np.linspace(0,10,n)
+timeseries=np.concatenate((np.power(t[0:randomvar],2), np.power(t[randomvar:n],3)- (t[randomvar]**3-t[randomvar]**2)), 0)
+timeseries=timeseries+(np.mean(timeseries)/np.random.randint(3,10))*np.random.randn(len(t))
+print(len(t), len(timeseries))
+plt.plot(timeseries)
+plt.show()
