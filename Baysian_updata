@@ -7,6 +7,7 @@
 import numpy as np
 import Likelihood_gen as lg
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import axes3d
 
 class DataThings(object):
     def __init__(self, x, y, z=0):
@@ -50,12 +51,20 @@ def main():
     Test.append({'name':'y', 'space': timeseries[0:n-window]})
 
     space=[]
-    space.append({'name':'der' , 'space' : np.linspace(np.min(der.y),np.max(der.y),40)})
-    space.append({'name': 'y', 'space': np.linspace(np.min(timeseries), np.max(timeseries))})
+    space.append({'name':'der' , 'space' : np.linspace(np.min(der.y),np.max(der.y),4)})
+    space.append({'name': 'y', 'space': np.linspace(np.min(timeseries), np.max(timeseries), 4)})
+
+
     Space=lg.VarSpace(space)
     Data=lg.DataSpace(Test, Space)
     stuff=lg.Likelihood(Data)
-    a=stuff.likelihood([np.mean(der.y), np.mean(timeseries)])
-    print(a)
+    grid_x = np.meshgrid( np.linspace(np.min(timeseries), np.max(timeseries),10), np.linspace(np.min(der.y),np.max(der.y),10))
+    grid_y= np.meshgrid( np.linspace(np.min(der.y),np.max(der.y),10), np.linspace(np.min(timeseries), np.max(timeseries),10))
+    a=stuff.likelihood((np.array(grid_x)[1][1][2],np.array(grid_x)[0][1][1]))
+    b=stuff.likelihood((np.array(grid_x)[1][1][4],np.array(grid_x)[0][1][2]))
+
+
+    print(stuff.p)
+
 
 main()

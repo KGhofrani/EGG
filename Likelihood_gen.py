@@ -102,7 +102,7 @@ def likelihoodgrid(dataspace):
 
     a = 0
     for i in range(0, parnum, 1):
-        b = np.add(a, np.power((dataspace.bigdata[i + 1][dataspace.names[i]] - dataspace.bigspace[i][dataspace.names[i]]),2)) #calculating
+        a = np.add(a, np.power((dataspace.bigdata[i + 1][dataspace.names[i]] - dataspace.bigspace[i][dataspace.names[i]]),2)) #calculating
         # the distance between the grid points and the data points. Needs to be normalized by the average of the data.
 
     w = norm.pdf(np.sqrt(a), 0, 1) #Calculating weight of each point
