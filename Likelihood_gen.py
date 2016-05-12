@@ -13,8 +13,9 @@ from scipy.interpolate import griddata
 class VarSpace (object):
 
     def __init__(self, varspace):
-        # varspace should be a dictionary with the following format: {
-        # 'name':'varname' , 'space': [variable space] }
+        # varspace should be a dictionary with the following format: {'name':'varname' , 'space': [variable space] }
+        # this creates a class from the dictionary
+
         parnum = len(varspace)  # extracting the number of parameters
 
         self.space = []
@@ -42,8 +43,9 @@ class VarSpace (object):
 class DataSpace (object): #this class contains the processed data and grid information
 
     def __init__(self, data, space):
+
         # data should be a dictionary with the following format: { 'name':'varname' , 'space': [variable timeseries] }
-        # first var name should be target and contain a vector of ones a zeros corresponding to a classification.
+        # first var name should be label and contain a vector of ones a zeros corresponding to a classification.
         # space should be a object from class 'space things'
 
         parnum = len(space.names)  # extracting the number of parameters
@@ -56,21 +58,21 @@ class DataSpace (object): #this class contains the processed data and grid infor
         beta = 1
 
         for i in range(0, parnum, 1):
-            alpha = np.kron(alpha, space.one[i][space.names['name']]) # creating a vector of ones with length of grid spaces
-            beta = np.kron(beta, np.ones(np.array(data[i]['space'])))  # creating a vector of ones with length of data points
+            alpha = np.kron(alpha, space.one[i][space.names[i]]) # creating a vector of ones with length of grid spaces
+        beta =  np.ones(np.array(data[i]['space']).shape)  # creating a vector of ones with length of data points
 
         onespacelong = alpha
-        onedatalong = np.transpose(beta)
+        onedatalong = np.transpose(np.matrix(beta))
+
 
         for i in range(0, parnum + 1, 1):
             # this is the data from the data processing people
-            self.bigdata.append({data[i]['name']: np.kron(onespacelong, data[i]['space'])}) #dic of big data arrays
+            self.bigdata.append({data[i]['name']: np.kron(onespacelong, np.transpose(np.matrix(data[i]['space'])))}) #dic of big data arrays
 
         lonspacearray = []
         for i in range(0, parnum, 1):
-            self.bigspace.append({data[i + 1]['name']: np.kron(onedatalong, space.longspace[i]['name'])})  # this is a
-            lonspacearray = np.concatenate(lonspacearray,
-            self.bigspace[i][data[i + 1]['name']])
+            self.bigspace.append({self.names[i]: np.kron(space.longspace[i][self.names[i]], onedatalong)})  # this is a
+
 
         self.longspacearray = lonspacearray
 
@@ -96,7 +98,8 @@ def likelihoodgrid(dataspace):
 
     a = 0
     for i in range(0, parnum, 1):
-        a += (dataspace.bigdata[i + 1][dataspace.names[i]] - dataspace.bigspace[i][dataspace.names[i]]) ** 2 #calculating
+        print(dataspace.bigdata[i+1][dataspace.names[i]].shape , dataspace.bigspace[i][dataspace.names[i]].shape)
+        a = a + np.exp((dataspace.bigdata[i + 1][dataspace.names[i]] - dataspace.bigspace[i][dataspace.names[i]]), 2) #calculating
         # the distance between the grid points and the data points. Needs to be normalized by the average of the data.
 
     w = norm.pdf(np.sqrt(a), 0, 1) #Calculating weight of each point
@@ -104,13 +107,10 @@ def likelihoodgrid(dataspace):
     p = np.sum(p, 0) #summing to complete the weighted average
     return p
 
-
 def main():
     m = []
     m.append({'name': 'var1', 'space': [1, 2, 3, 4]})
     m.append({'name': 'var2', 'space': [1, 2, 3, 4, 5, 6]})
-    print(m)
     h = VarSpace(m)
-    print(h.longspace)
 
 main()

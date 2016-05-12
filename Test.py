@@ -6,13 +6,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-Materials = []
 
-Materials.append({'E': 17e4, 'var2': 'C:\\data file path', 'var3': [1, 2, 3, 4]})
-Materials.append({'E': 17e4, 'var2': 'C:\data file path', 'var3':[1, 2,3, 4]})
+a=[1,3,4]
+b=np.matrix([1, 1]).transpose()
 
-print(Materials['E'])
+print(b, b.transpose())
 
-a=np.array([[1,2, 7],[4,6, 5]])
-
-print(np.transpose(a).shape)
+print(np.transpose(b).shape)

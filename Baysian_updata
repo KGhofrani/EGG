@@ -5,6 +5,7 @@
 # Step 5, update all the weights
 
 import numpy as np
+import Likelihood_gen as lg
 import matplotlib.pyplot as plt
 
 class DataThings(object):
@@ -25,26 +26,29 @@ def rolder(timeseries, time, window):
     M = np.reshape(M.ravel()[np.flatnonzero(Proj)], ( length - window + 1,window))
     M=np.mean(M,1)
     der = (M[1:length] - M[0:-1]) / (time[1] - time[0])
-    print(der.shape, M.shape)
     return DataThings(time[0:length-window], der, M)
 
 
 def main():
 
-    n = 10000  # number of time steps
-
+    n = 15  # number of time steps
+    window=4
     randomvar = np.random.randint(1, n, 1)  # just your friendly random integer between 1 and a n
     t = np.linspace(0, 10, n)
     timeseries = np.concatenate((2 * t[0:randomvar], t[randomvar:n] * 20 -  (t[randomvar] * 20 - t[randomvar] * 2)), 0)
     timeseries = timeseries + (np.mean(timeseries) / (50 * np.random.rand(1) + 5)) * 1* np.random.randn(len(t))
-    der=rolder(timeseries, t, 500)
-    #plt.plot(t, timeseries)
-    plt.figure(1)
-    plt.plot(der.x, der.y)
-    plt.figure(2)
-    plt.plot(timeseries)
-    plt.figure(3)
-    plt.plot(der.z)
-    plt.show()
+    label=np.concatenate((np.zeros(randomvar), np.ones(n-randomvar)),0)
+    der=rolder(timeseries, t, window)
+    Test=[]
+    Test.append({'name':'label', 'space' : label[0:n-window]})
+    Test.append({'name':'der', 'space': der.y[0:n-window]})
+    Test.append({'name':'y', 'space': timeseries[0:n-window]})
+
+    space=[]
+    space.append({'name':'der' , 'space' : np.linspace(np.min(der.y),np.max(der.y),40)})
+    space.append({'name': 'y', 'space': np.linspace(np.min(timeseries), np.max(timeseries))})
+    Space=lg.VarSpace(space)
+    Data=lg.DataSpace(Test, Space)
+    P=lg.likelihoodgrid(Data)
 
 main()
