@@ -69,14 +69,17 @@ class DataSpace (object): #this class contains the processed data and grid infor
             # this is the data from the data processing people
             self.bigdata.append({data[i]['name']: np.kron(onespacelong, np.transpose(np.matrix(data[i]['space'])))}) #dic of big data arrays
 
-        longspacearray = []
+
         for i in range(0, parnum, 1):
             self.bigspace.append({self.names[i]: np.kron(space.longspace[i][self.names[i]], onedatalong)})  # this is a
-            longspacearray=np.concatenate((longspacearray, space.longspace[i][self.names[i]]), 0)
+
+            if i==0:
+                longspacearray = np.matrix(space.longspace[i][self.names[i]])
+            else:
+                longspacearray=np.concatenate((np.matrix(longspacearray), np.matrix(space.longspace[i][self.names[i]])), axis=0)
 
 
         self.longspacearray = longspacearray
-
         # grid that we calculate the averages for
 
 
@@ -88,7 +91,7 @@ class Likelihood(object):
         self.dataspace = dataspace
 
     def likelihood(self, point):
-        return griddata(self.dataspace.lonspacearray, self.p, point, 'cubic') # function interpolates the likelihood
+        return griddata(self.dataspace.longspacearray.T, np.squeeze(np.array(self.p)), (point), 'cubic') # function interpolates the likelihood
         #value using the grid
 
 

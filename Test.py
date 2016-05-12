@@ -7,9 +7,6 @@ import matplotlib.pyplot as plt
 
 
 
-a=[1,3,4]
-b=np.matrix([1, 1]).transpose()
+a=np.ones((1,4))
 
-print(b, b.transpose())
-
-print(np.transpose(b).shape)
+print(a)

@@ -55,5 +55,7 @@ def main():
     Space=lg.VarSpace(space)
     Data=lg.DataSpace(Test, Space)
     stuff=lg.Likelihood(Data)
+    a=stuff.likelihood([np.mean(der.y), np.mean(timeseries)])
+    print(a)
 
 main()
