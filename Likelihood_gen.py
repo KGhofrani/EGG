@@ -69,12 +69,13 @@ class DataSpace (object): #this class contains the processed data and grid infor
             # this is the data from the data processing people
             self.bigdata.append({data[i]['name']: np.kron(onespacelong, np.transpose(np.matrix(data[i]['space'])))}) #dic of big data arrays
 
-        lonspacearray = []
+        longspacearray = []
         for i in range(0, parnum, 1):
             self.bigspace.append({self.names[i]: np.kron(space.longspace[i][self.names[i]], onedatalong)})  # this is a
+            longspacearray=np.concatenate((longspacearray, space.longspace[i][self.names[i]]), 0)
 
 
-        self.longspacearray = lonspacearray
+        self.longspacearray = longspacearray
 
         # grid that we calculate the averages for
 
@@ -98,19 +99,11 @@ def likelihoodgrid(dataspace):
 
     a = 0
     for i in range(0, parnum, 1):
-        print(dataspace.bigdata[i+1][dataspace.names[i]].shape , dataspace.bigspace[i][dataspace.names[i]].shape)
-        a = a + np.exp((dataspace.bigdata[i + 1][dataspace.names[i]] - dataspace.bigspace[i][dataspace.names[i]]), 2) #calculating
+        b = np.add(a, np.power((dataspace.bigdata[i + 1][dataspace.names[i]] - dataspace.bigspace[i][dataspace.names[i]]),2)) #calculating
         # the distance between the grid points and the data points. Needs to be normalized by the average of the data.
 
     w = norm.pdf(np.sqrt(a), 0, 1) #Calculating weight of each point
-    p = np.multiply(dataspace.bigdata[0], w) #multiplying the outcomes (one or zero) by the distribution
+    p = np.multiply(dataspace.bigdata[0]['label'], w) #multiplying the outcomes (one or zero) by the distribution
     p = np.sum(p, 0) #summing to complete the weighted average
     return p
 
-def main():
-    m = []
-    m.append({'name': 'var1', 'space': [1, 2, 3, 4]})
-    m.append({'name': 'var2', 'space': [1, 2, 3, 4, 5, 6]})
-    h = VarSpace(m)
-
-main()

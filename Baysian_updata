@@ -31,6 +31,7 @@ def rolder(timeseries, time, window):
 
 def main():
 
+    # making up data
     n = 15  # number of time steps
     window=4
     randomvar = np.random.randint(1, n, 1)  # just your friendly random integer between 1 and a n
@@ -39,6 +40,10 @@ def main():
     timeseries = timeseries + (np.mean(timeseries) / (50 * np.random.rand(1) + 5)) * 1* np.random.randn(len(t))
     label=np.concatenate((np.zeros(randomvar), np.ones(n-randomvar)),0)
     der=rolder(timeseries, t, window)
+    # making up data
+
+
+
     Test=[]
     Test.append({'name':'label', 'space' : label[0:n-window]})
     Test.append({'name':'der', 'space': der.y[0:n-window]})
@@ -49,6 +54,6 @@ def main():
     space.append({'name': 'y', 'space': np.linspace(np.min(timeseries), np.max(timeseries))})
     Space=lg.VarSpace(space)
     Data=lg.DataSpace(Test, Space)
-    P=lg.likelihoodgrid(Data)
+    stuff=lg.Likelihood(Data)
 
 main()
