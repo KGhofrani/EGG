@@ -33,7 +33,7 @@ def rolder(timeseries, time, window):
 def main():
 
     # making up data
-    n = 15  # number of time steps
+    n = 10000  # number of time steps
     window=4
     randomvar = np.random.randint(1, n, 1)  # just your friendly random integer between 1 and a n
     t = np.linspace(0, 10, n)
@@ -51,8 +51,8 @@ def main():
     Test.append({'name':'y', 'space': timeseries[0:n-window]})
 
     space=[]
-    space.append({'name':'der' , 'space' : np.linspace(np.min(der.y),np.max(der.y),4)})
-    space.append({'name': 'y', 'space': np.linspace(np.min(timeseries), np.max(timeseries), 4)})
+    space.append({'name':'der' , 'space' : np.linspace(np.min(der.y),np.max(der.y),100)})
+    space.append({'name': 'y', 'space': np.linspace(np.min(timeseries), np.max(timeseries), 100)})
 
 
     Space=lg.VarSpace(space)
@@ -60,11 +60,10 @@ def main():
     stuff=lg.Likelihood(Data)
     grid_x = np.meshgrid( np.linspace(np.min(timeseries), np.max(timeseries),10), np.linspace(np.min(der.y),np.max(der.y),10))
     grid_y= np.meshgrid( np.linspace(np.min(der.y),np.max(der.y),10), np.linspace(np.min(timeseries), np.max(timeseries),10))
-    a=stuff.likelihood((np.array(grid_x)[1][1][2],np.array(grid_x)[0][1][1]))
-    b=stuff.likelihood((np.array(grid_x)[1][1][4],np.array(grid_x)[0][1][2]))
+    a=stuff.likelihood((np.array(grid_x)[1],np.array(grid_x)[0]))
 
 
-    print(stuff.p)
+    print(a)
 
 
 main()
